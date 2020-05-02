@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-using UnityEngine.UI;
 
 public enum AreaType
 {
@@ -16,14 +15,6 @@ public enum StatusEffect
     burn,
     chill,
     bleed
-}
-
-public enum Orientation
-{
-    left,
-    right,
-    up,
-    down
 }
 
 public class WorldManager : MonoBehaviour

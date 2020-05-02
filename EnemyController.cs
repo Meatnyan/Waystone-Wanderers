@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using static GenericExtensions;
 public class EnemyController : MonoBehaviour {
 
     public string internalName;
@@ -288,17 +288,26 @@ public class EnemyController : MonoBehaviour {
         shadowLocalPos = shadowObject.transform.localPosition;
 
 
+        // make a list of all holes in current level for worldManager. TODO: put this somewhere where it makes more sense probably
         if (worldManager.singularHoles.Count == 0)
             worldManager.singularHoles = new List<GameObject>(GameObject.FindGameObjectsWithTag("Hole"));
+
 
         if (isFlying)
             foreach(GameObject holeObj in worldManager.singularHoles)
                 Physics2D.IgnoreCollision(collider2D, holeObj.GetComponent<Collider2D>());
 
-        for (int eventID = 0; eventID < onDeathEvents.Length; ++eventID)
-            for (int projID = 0; projID < onDeathEvents[eventID].onDeathProjectiles.Length; ++projID)
-                GenericExtensions.SetEnemyShotMoverProperties(onDeathEvents[eventID].onDeathProjectiles[projID].GetComponent<EnemyShotMover>(), damage: onDeathEvents[eventID].damage,
-                    shotSpeed: onDeathEvents[eventID].shotSpeed, maxDuration: onDeathEvents[eventID].maxDuration); // since the objs are !isAttached, Awake() will deparent them and set spawn time
+
+        // set up enemyShotMover properties for on-death events
+        // 
+        foreach(OnDeathEvent onDeathEvent in onDeathEvents)
+            foreach (GameObject onDeathProjectile in onDeathEvent.onDeathProjectiles)
+                onDeathProjectile.GetComponent<EnemyShotMover>().SetStats(
+                    newDamage: onDeathEvent.damage,
+                    newShotSpeed: onDeathEvent.shotSpeed,
+                    newMaxDuration: onDeathEvent.maxDuration);
+                    // since the projectiles are !isAttached,
+                    // their Awake() will deparent them and set spawn time once they're instantiated
     }
 
     private void OnBecameVisible()
@@ -345,12 +354,12 @@ public class EnemyController : MonoBehaviour {
 
         sqrMagPlayerEnemy = (playerObject.transform.position - transform.position).sqrMagnitude;
 
-        sqrMagPlayerShotEnemy = GenericExtensions.GetClosestSqrMagnitude(transform.position, playerController.shotObjects);
+        sqrMagPlayerShotEnemy = GetClosestSqrMagnitude(transform.position, playerController.shotObjects);
 
         Collider2D raycastHitCollider = Physics2D.Raycast(transform.position, playerController.transform.position - transform.position, visionRange * (isAlert ? 2f : 1f), sightBlockerLayers).collider;
 
         if (((raycastHitCollider != null && raycastHitCollider.CompareTag("Player"))
-           || GenericExtensions.SqrMagIsInDistance(sqrMagPlayerShotEnemy, hearingRange))
+           || SqrMagIsInDistance(sqrMagPlayerShotEnemy, hearingRange))
            && (allowNoticingPlayer || isAlert))
         {
             noticesPlayer = true;
@@ -407,7 +416,7 @@ public class EnemyController : MonoBehaviour {
 
             while(pickupDropChance > 0f)
             {
-                if(GenericExtensions.DetermineIfPercentChancePasses(pickupDropChance))
+                if(DetermineIfPercentChancePasses(pickupDropChance))
                     amountOfPickupsToDrop++;
 
                 pickupDropChance -= 100f;

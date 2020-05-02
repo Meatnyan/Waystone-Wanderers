@@ -194,7 +194,7 @@ public class Shooter : MonoBehaviour {
     int latestShotSpawnID = -1;
 
 
-    // weapon-identifying booleans start here
+    // weapon-identifying booleans start here. TODO: this is a super crappy way of doing this lmao 
 
     [NonSerialized]
     public bool isGeneric = false;
@@ -332,15 +332,9 @@ public class Shooter : MonoBehaviour {
         }
     }
 
-    bool HeldAmmoIsAvailable()
+    public bool HeldAmmoIsAvailable()
     {
-        return ammoType switch
-        {
-            AmmoType.USAM => playerController.heldAmmoUSAM > 0,
-            AmmoType.Shells => playerController.heldAmmoShells > 0,
-            AmmoType.Energy => playerController.heldAmmoEnergy > 0,
-            _ => false
-        };
+        return playerController.GetHeldAmmoCount(ammoType) > 0;
     }
 
     IEnumerator Reloader()
@@ -356,31 +350,14 @@ public class Shooter : MonoBehaviour {
 
         yield return new WaitForSeconds(reloadTime);
 
-        currentAmmo += ammoType switch
-        {
-            AmmoType.USAM => playerController.heldAmmoUSAM,
-            AmmoType.Shells => playerController.heldAmmoShells,
-            AmmoType.Energy => playerController.heldAmmoEnergy,
-            _ => 0
-        };
+        currentAmmo += playerController.GetHeldAmmoCount(ammoType);
 
         if (currentAmmo > maxAmmo)
             currentAmmo = maxAmmo;
 
         int ammoGained = currentAmmo - ammoBeforeReloading;
 
-        switch (ammoType)
-        {
-            case AmmoType.USAM:
-                playerController.heldAmmoUSAM -= ammoGained;
-                break;
-            case AmmoType.Shells:
-                playerController.heldAmmoShells -= ammoGained;
-                break;
-            case AmmoType.Energy:
-                playerController.heldAmmoEnergy -= ammoGained;
-                break;
-        }
+        playerController.AddToHeldAmmoCount(ammoType, -ammoGained);
 
         reloading = false;
     }
@@ -407,18 +384,7 @@ public class Shooter : MonoBehaviour {
 
             currentAmmo++;
 
-            switch(ammoType)
-            {
-                case AmmoType.USAM:
-                    playerController.heldAmmoUSAM--;
-                    break;
-                case AmmoType.Shells:
-                    playerController.heldAmmoShells--;
-                    break;
-                case AmmoType.Energy:
-                    playerController.heldAmmoEnergy--;
-                    break;
-            }
+            playerController.AddToHeldAmmoCount(ammoType, -1);
         }
 
         reloading = false;

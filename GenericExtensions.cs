@@ -39,22 +39,9 @@ public static class GenericExtensions
         return sqrMag <= distance * distance ? true : false;
     }
 
-    public static void SetEnemyShotMoverProperties(EnemyShotMover enemyShotMover, float damage, float shotSpeed, float maxDuration)
+    public static void LogWarningForUnrecognizedValue(object unrecognizedValue)
     {
-        SetEnemyShotMoverProperties(enemyShotMover, damage, shotSpeed, maxDuration, false, false);
-    }
-
-    public static void SetEnemyShotMoverProperties(EnemyShotMover enemyShotMover, float damage, float shotSpeed, float maxDuration, bool detachFromParent, bool resetSpawnTime)
-    {
-        enemyShotMover.damage = damage;
-        enemyShotMover.shotSpeed = shotSpeed;
-        enemyShotMover.maxDuration = maxDuration;
-
-        if (detachFromParent)
-            enemyShotMover.transform.SetParent(null);
-
-        if (resetSpawnTime)
-            enemyShotMover.spawnTime = Time.time;
+        Debug.LogWarning($"Unrecognized { unrecognizedValue.GetType() } \"{ unrecognizedValue }\"");
     }
 
     public static float GetRotationToFaceTargetPosition(Vector2 originPosition, Vector2 targetPosition)

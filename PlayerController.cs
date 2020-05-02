@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static GenericExtensions;
 
 public class PlayerController : MonoBehaviour {
 
@@ -617,6 +618,63 @@ public class PlayerController : MonoBehaviour {
 
             default:
                 Debug.LogWarning($"Unrecognized stat name \"{statName.ToLowerInvariant()}\". Remember that primary stat names end with \"flat\" or \"multi\"");
+                break;
+        }
+    }
+
+    public int GetHeldAmmoCount(AmmoType ammoType)
+    {
+        switch(ammoType)
+        {
+            case AmmoType.USAM:
+                return heldAmmoUSAM;
+            case AmmoType.Shells:
+                return heldAmmoShells;
+            case AmmoType.Energy:
+                return heldAmmoEnergy;
+
+            default:
+                LogWarningForUnrecognizedValue(ammoType);
+                return 0;
+        }
+    }
+
+    public void AddToHeldAmmoCount(AmmoType ammoType, int count)
+    {
+        switch (ammoType)
+        {
+            case AmmoType.USAM:
+                heldAmmoUSAM += count;
+                break;
+            case AmmoType.Shells:
+                heldAmmoShells += count;
+                break;
+            case AmmoType.Energy:
+                heldAmmoEnergy += count;
+                break;
+
+            default:
+                LogWarningForUnrecognizedValue(ammoType);
+                break;
+        }
+    }
+
+    public void SetHeldAmmoCount(AmmoType ammoType, int count)
+    {
+        switch (ammoType)
+        {
+            case AmmoType.USAM:
+                heldAmmoUSAM = count;
+                break;
+            case AmmoType.Shells:
+                heldAmmoShells = count;
+                break;
+            case AmmoType.Energy:
+                heldAmmoEnergy = count;
+                break;
+
+            default:
+                LogWarningForUnrecognizedValue(ammoType);
                 break;
         }
     }

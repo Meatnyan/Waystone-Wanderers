@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class EnemyShotMover : MonoBehaviour {
 
-    public Orientation orientation;
-
     public bool isAttached;
 
     public bool isMassive;
@@ -23,98 +21,103 @@ public class EnemyShotMover : MonoBehaviour {
     public float maxDuration;
 
     [HideInInspector]
-    public float spawnTime = Mathf.Infinity;
+    public float detachTime = Mathf.Infinity;
 
     [HideInInspector]
     public Rigidbody2D rb;
 
-    EnemyShooter enemyShooter;
-
     EnemyController enemyController;
+
+    public void DetachFromParent()
+    {
+        transform.SetParent(null);
+
+        detachTime = Time.time;
+    }
+
+    public void SetStats(float newDamage, float newShotSpeed, float newMaxDuration)
+    {
+        damage = newDamage;
+        shotSpeed = newShotSpeed;
+        maxDuration = newMaxDuration;
+    }
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
 
         if (transform.parent)
-        {
             enemyController = transform.root.GetComponent<EnemyController>();
-            enemyShooter = transform.parent.GetComponent<EnemyShooter>();
-        }
 
-        if (enemyShooter)
-        {
-            damage = enemyShooter.damage;
-            shotSpeed = enemyShooter.shotSpeed;
-            maxDuration = enemyShooter.shotMaxDuration;
-        }
 
         if (!isAttached)
-        {
-            transform.SetParent(null);
-            spawnTime = Time.time;
-        }
+            DetachFromParent();
+
+
+        // SetStats() is called from Instantiate()ing object (EnemyShooter or OnDeathEvent)
+        // and as such it triggers right after Awake(), before Start()
     }
 
-    private void Start()    // velocity needs to be set in Start so that shotSpeed can be modified after instantiating
+    private void Start()
     {
+        // velocity is set in Start() because shotSpeed is determined between Awake() and Start()
         if (!isAttached)
-        {
-            rb.velocity = shotSpeed * enemyController.shotSpeedMultiplier * (orientation switch
-            {
-                Orientation.left => -transform.right,
-                Orientation.right => transform.right,
-                Orientation.up => transform.up,
-                Orientation.down => -transform.up,
-                _ => Vector3.zero
-            });            
-        }
+            rb.velocity = shotSpeed * enemyController.shotSpeedMultiplier * transform.right;
     }
 
     private void Update()
     {
-        if (Time.time > spawnTime + maxDuration)
+        if (Time.time > detachTime + maxDuration)
         {
             Destroy(gameObject);
             return;
         }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D hitCollider)
     {
-        if (other.CompareTag("Wall") || other.CompareTag("Obstacle"))
+        if (hitCollider.CompareTag("Wall") || hitCollider.CompareTag("Obstacle"))
         {
             Destroy(gameObject);
             return;
         }
 
-        if(other.CompareTag("Player"))
+        if(hitCollider.CompareTag("Player"))
         {
-            GameObject playerObject = other.gameObject;
-            PlayerController playerController = playerObject.GetComponent<PlayerController>();
+            PlayerController playerController = hitCollider.GetComponent<PlayerController>();
+
             if (playerController.invincibilityLayers < 1)
             {
                 damage *= enemyController.damageMultiplier;
                 damage -= playerController.Armor;
+
                 if (damage < 1)
                     damage = 1;
+
                 playerController.currentHealth -= damage;
+
                 playerController.UpdateAfterGettingHitEffects();
             }
+
             Destroy(gameObject);
             return;
         }
 
-        if(isFriendly && other.CompareTag("Enemy"))
+        if(isFriendly && hitCollider.CompareTag("Enemy"))
         {
-            GameObject otherEnemyObject = other.gameObject;
-            EnemyController otherEnemyController = otherEnemyObject.GetComponent<EnemyController>();
+            EnemyController otherEnemyController = hitCollider.GetComponent<EnemyController>();
+
             damage *= enemyController.damageMultiplier;
             damage -= otherEnemyController.armor;
+
             if (damage < 1)
                 damage = 1;
+
             otherEnemyController.CurrentHealth -= damage;
+
+
             Destroy(gameObject);
+            return;
         }
     }
 }
