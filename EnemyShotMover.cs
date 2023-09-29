@@ -62,7 +62,7 @@ public class EnemyShotMover : MonoBehaviour {
     {
         // velocity is set in Start() because shotSpeed is determined between Awake() and Start()
         if (!isAttached)
-            rb.velocity = shotSpeed * enemyController.shotSpeedMultiplier * transform.right;
+            rb.velocity = shotSpeed * enemyController.shotSpeedMultiplier * (-transform.right);
     }
 
     private void Update()

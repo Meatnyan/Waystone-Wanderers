@@ -41,7 +41,7 @@ public class Shooter : MonoBehaviour {
     [Header("Main Stats")]
     public float baseDamage;
 
-    public float fireRate;
+    public float fireDelay;
 
     public int maxAmmo;
 
@@ -156,7 +156,7 @@ public class Shooter : MonoBehaviour {
     public float defaultReloadOneShotTime;
 
     [HideInInspector]
-    public float defaultFireRate;
+    public float defaultFireDelay;
 
     float rot_z;
 
@@ -248,7 +248,7 @@ public class Shooter : MonoBehaviour {
 
         defaultReloadTime = reloadTime;
         defaultReloadOneShotTime = reloadOneShotTime;
-        defaultFireRate = fireRate;
+        defaultFireDelay = fireDelay;
 
         playerController.UpdateOnGlobalWeaponChangingEffects(this);
 
@@ -274,7 +274,7 @@ public class Shooter : MonoBehaviour {
             reloadTime = defaultReloadTime / playerController.ReloadSpeedTotal;
             reloadOneShotTime = defaultReloadOneShotTime / playerController.ReloadSpeedTotal;
 
-            fireRate = defaultFireRate / (playerController.rangedAttackSpeedMultiplier * playerController.AttackSpeedTotal);
+            fireDelay = defaultFireDelay / (playerController.rangedAttackSpeedMultiplier * playerController.AttackSpeedTotal);
 
 
             UpdateTransform();
@@ -481,7 +481,7 @@ public class Shooter : MonoBehaviour {
 
             shotSound.Play();
 
-            timeOfNextAllowedShot = Time.time + fireRate;
+            timeOfNextAllowedShot = Time.time + fireDelay;
 
             currentAmmo -= ammoConsumptionPerShot;
 

@@ -21,7 +21,7 @@ public class EnemyShooter : MonoBehaviour {
 
     public float timeBetweenBurstWaves = 0;
 
-    public float fireRate;
+    public float fireDelay;
 
     public float shotSpeed;
 
@@ -102,7 +102,7 @@ public class EnemyShooter : MonoBehaviour {
             yield return new WaitForSeconds(timeBetweenBurstWaves * Random.Range(0.7f, 1.3f));
         }
 
-        timeOfNextAllowedShot = Time.time + (fireRate * Random.Range(0.9f, 1.1f) / enemyController.attackSpeedMultiplier);
+        timeOfNextAllowedShot = Time.time + (fireDelay * Random.Range(0.9f, 1.1f) / enemyController.attackSpeedMultiplier);
 
         isBurstShooting = false;
     }

@@ -204,7 +204,7 @@ public class WorldManager : MonoBehaviour
             enemyArrowInstance.SetActive(true);
 
             enemyArrowInstance.transform.rotation = Quaternion.Euler(0f, 0f, Vector2.SignedAngle(enemyArrowInstance.transform.position,
-                GenericExtensions.GetClosestGameObject(playerController.transform.position, enemiesInCurrentLevel).transform.position) + 90f);    // rotate towards closest enemy
+                GenericExtensions.GetClosestGameObject(playerController.transform.position, enemiesInCurrentLevel).transform.position) + 180f);    // rotate towards closest enemy
 
 
             if (enemiesInCurrentLevel.Count <= 9)

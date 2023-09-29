@@ -279,6 +279,8 @@ public class EnemyController : MonoBehaviour {
             damageMultiplier *= worldManager.enemyDmgMultiplierPerLevel;
         }
 
+        damageMultiplier = Mathf.Round(damageMultiplier);
+
         CurrentHealth = maxHealth;
         latestCurrentHealth = CurrentHealth;
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -357,6 +359,9 @@ public class EnemyController : MonoBehaviour {
         sqrMagPlayerShotEnemy = GetClosestSqrMagnitude(transform.position, playerController.shotObjects);
 
         Collider2D raycastHitCollider = Physics2D.Raycast(transform.position, playerController.transform.position - transform.position, visionRange * (isAlert ? 2f : 1f), sightBlockerLayers).collider;
+
+        //if (raycastHitCollider != null)
+        //    Debug.Log("raycastHitCollider.tag = " + raycastHitCollider.tag);
 
         if (((raycastHitCollider != null && raycastHitCollider.CompareTag("Player"))
            || SqrMagIsInDistance(sqrMagPlayerShotEnemy, hearingRange))

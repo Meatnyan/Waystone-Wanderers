@@ -34,7 +34,7 @@ public class HeldAmmo : MonoBehaviour {
     {
         if (playerController.heldShooter)
         {
-            switch(playerController.heldShooter.ammoType)
+            switch (playerController.heldShooter.ammoType)
             {
                 case AmmoType.USAM:
                     ammoIcon.sprite = usamIcon;
@@ -47,6 +47,9 @@ public class HeldAmmo : MonoBehaviour {
                 case AmmoType.Energy:
                     ammoIcon.sprite = energyIcon;
                     heldAmmoText.text = "" + playerController.heldAmmoEnergy;
+                    break;
+                default:
+                    Debug.Log("Unrecognized ammo type on " + playerController.heldShooter);
                     break;
             }
         }

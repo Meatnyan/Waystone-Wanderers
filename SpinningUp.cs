@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpinningUp : MonoBehaviour
 {
-    public float bonusFireRateMultiplier;
+    public float maxSpinAttackSpeedMultiplier;
 
     public float spinSpeedUpMultiplier;
 
@@ -28,7 +28,7 @@ public class SpinningUp : MonoBehaviour
         if (shooter.charge > 1f)
             shooter.charge = 1f;
 
-        UpdateFireRateAndTimeOfNextAllowedShot();
+        UpdateFireDelayAndTimeOfNextAllowedShot();
     }
 
     void SlowDownSpinning()
@@ -38,13 +38,13 @@ public class SpinningUp : MonoBehaviour
         if (shooter.charge < 0f)
             shooter.charge = 0f;
 
-        UpdateFireRateAndTimeOfNextAllowedShot();
+        UpdateFireDelayAndTimeOfNextAllowedShot();
     }
 
-    void UpdateFireRateAndTimeOfNextAllowedShot()
+    void UpdateFireDelayAndTimeOfNextAllowedShot()
     {
-        shooter.fireRate /= 1f + shooter.charge * bonusFireRateMultiplier;
+        shooter.fireDelay /= 1f + shooter.charge * maxSpinAttackSpeedMultiplier;
 
-        shooter.timeOfNextAllowedShot = shooter.timeOfLastShot + shooter.fireRate;
+        shooter.timeOfNextAllowedShot = shooter.timeOfLastShot + shooter.fireDelay;
     }
 }
