@@ -334,6 +334,9 @@ public class PlayerController : MonoBehaviour {
     public bool zooming = false;
 
     [System.NonSerialized]
+    public bool dead = false;
+
+    [System.NonSerialized]
     public PauseMenu pauseMenu;
 
     [System.NonSerialized]
@@ -1183,7 +1186,7 @@ public class PlayerController : MonoBehaviour {
 
     public void UpdateOnDeathEffects()
     {
-        if(adrenalGland != null)
+        if(adrenalGland != null && adrenalGland.remainingTime > 0f)
         {
             preventDeathLayers++;
             adrenalGland.countingDown = true;
@@ -1334,8 +1337,44 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+    public void Die()
+    {
+        dead = true;
+
+        allowControl = false;
+        allowedToLeaveLevel = false;
+
+        latestCurrentHealth = currentHealth;
+
+        if (flipped)
+            transform.rotation = Quaternion.Euler(0f, 0f, -90f);
+        else
+            transform.rotation = Quaternion.Euler(0f, 0f, 90f);
+
+        rb.mass = 1000;
+
+        UnequipHeldWeapon(reactivate: false);
+
+        gameOverController.gameObject.SetActive(true);
+        gameOverController.StartDisplayGameOverScreen();
+
+        pauseMenu.pauseMenuBgImage.enabled = true;
+
+
+        animator.Play(deadAnimHash);
+        shadowSpriteRenderer.sprite = deadShadowSprite;
+        if (flipped)
+            shadowObj.transform.position = new Vector2(transform.position.x - 0.05f, transform.position.y - spriteRenderer.sprite.bounds.extents.x * 0.35f);
+        else
+            shadowObj.transform.position = new Vector2(transform.position.x + 0.05f, transform.position.y - spriteRenderer.sprite.bounds.extents.x * 0.35f);
+        shadowObj.transform.rotation = Quaternion.identity;
+
+        return;
+    }
+
     private void Update()
-    {   // update achievements first
+    {
+        // update achievements first
         if (totalHealthRestored > achievementManager.reqs[(int)ReqName.HighestHealthRestored])
             achievementManager.reqs[(int)ReqName.HighestHealthRestored] = totalHealthRestored;
 
@@ -1567,46 +1606,22 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.Mouse1) || Input.GetKeyUp(KeyCode.LeftControl))
             zooming = false;
 
-        if (currentHealth <= 0 && latestCurrentHealth > 0)  // die
+        if (preventDeathLayers < 0)
         {
-            UpdateOnDeathEffects();
+            Debug.LogWarning("preventDeathLayers on PlayerController is below 0, setting to 0");
+            preventDeathLayers = 0;
+        }
 
-            if (preventDeathLayers < 0)
-            {
-                Debug.LogWarning("preventDeathLayers on PlayerController is below 0, setting to 0");
-                preventDeathLayers = 0;
-            }
+        if (!dead && currentHealth <= 0)
+        {
             if (preventDeathLayers < 1)
             {
-                allowControl = false;
-                allowedToLeaveLevel = false;
+                UpdateOnDeathEffects();
 
-                latestCurrentHealth = currentHealth;
-
-                if (flipped)
-                    transform.rotation = Quaternion.Euler(0f, 0f, -90f);
-                else
-                    transform.rotation = Quaternion.Euler(0f, 0f, 90f);
-
-                rb.mass = 1000;
-
-                UnequipHeldWeapon(reactivate: false);
-
-                gameOverController.gameObject.SetActive(true);
-                gameOverController.StartDisplayGameOverScreen();
-
-                pauseMenu.pauseMenuBgImage.enabled = true;
-
-
-                animator.Play(deadAnimHash);
-                shadowSpriteRenderer.sprite = deadShadowSprite;
-                if(flipped)
-                    shadowObj.transform.position = new Vector2(transform.position.x - 0.05f, transform.position.y - spriteRenderer.sprite.bounds.extents.x * 0.35f);
-                else
-                    shadowObj.transform.position = new Vector2(transform.position.x + 0.05f, transform.position.y - spriteRenderer.sprite.bounds.extents.x * 0.35f);
-                shadowObj.transform.rotation = Quaternion.identity;
-
-                return;
+                if (preventDeathLayers < 1)
+                {
+                    Die();
+                }
             }
         }
 

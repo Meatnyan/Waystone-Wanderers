@@ -399,7 +399,8 @@ public class PauseMenu : MonoBehaviour {
 
     public void Exit()
     {
-        gameOverController.Exit();
+        Application.Quit();
+        //gameOverController.Exit();
     }
 
     IEnumerator StartPauseMenu()

@@ -12,6 +12,8 @@ public class MainMenu : MonoBehaviour
 
     public GameObject gameOverTextObject;
 
+    public GameObject comingSoonTextObject;
+
     public CollectionScreen collectionScreen;
 
     LoadingController loadingController;
@@ -46,8 +48,9 @@ public class MainMenu : MonoBehaviour
 
     public void StartCollectionScreen()
     {
-        collectionScreen.gameObject.SetActive(true);
-        collectionScreen.DisplayCollectionCategoryChoices();    // enables gray bg, weapons button and items button. back button is always enabled as long as collection screen is enabled
+        comingSoonTextObject.SetActive(!comingSoonTextObject.activeSelf);
+        //collectionScreen.gameObject.SetActive(true);
+        //collectionScreen.DisplayCollectionCategoryChoices();    // enables gray bg, weapons button and items button. back button is always enabled as long as collection screen is enabled
     }
 
     public void ExitGame()

@@ -317,7 +317,7 @@ public class UICanvasController : MonoBehaviour {
                     if (worldManager.waystoneIsPresent)
                         worldManager.waystoneController.transform.position = playerController.transform.position;
                     else
-                        worldManager.SpawnWaystone(playerController.transform.position);
+                        worldManager.SpawnWaystone(GenericExtensions.GetMousePositionInWorld());
                 else
                     ShowFailureMessage($"The command \"{command}\" does not accept any parameters");
 

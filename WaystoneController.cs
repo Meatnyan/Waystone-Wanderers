@@ -63,7 +63,7 @@ public class WaystoneController : MonoBehaviour
             {
                 playerControllerInstance.adrenalGland.countdownDuration = playerControllerInstance.adrenalGland.baseCountdownDuration;
                 playerControllerInstance.adrenalGland.countdownStartTime = Mathf.NegativeInfinity;
-                playerControllerInstance.adrenalGland.remainingTime = Mathf.NegativeInfinity;
+                playerControllerInstance.adrenalGland.remainingTime = Mathf.Infinity;
             }
 
             playerControllerInstance.restartManager.DestroyAllUnownedWeapons(playerControllerInstance);

@@ -5,19 +5,21 @@ using UnityEngine.UI;
 
 public class AdrenalGland : MonoBehaviour {
 
-    [HideInInspector]
+    [System.NonSerialized]
     public GameObject adrenalGlandCountdownObject;
 
     public float baseCountdownDuration;
 
-    [HideInInspector]
+    [System.NonSerialized]
     public float countdownDuration;
 
-    [HideInInspector]
+    [System.NonSerialized]
     public float countdownStartTime = Mathf.NegativeInfinity;
 
-    [HideInInspector]
-    public float remainingTime = Mathf.NegativeInfinity;
+    // NonSerialized assures that the field doesn't keep any value that was written from an outside source (e.g. the inspector)
+    // if it was HideInInspector it could save a value previously assigned in the inspector, in this case it would default to 0
+    [System.NonSerialized]
+    public float remainingTime = Mathf.Infinity;
 
     GameObject playerObject;
 
